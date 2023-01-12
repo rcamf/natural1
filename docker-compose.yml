@@ -25,7 +25,7 @@ services:
       context: ./
       dockerfile: ./api/Dockerfile
     ports:
-      - ${API_SERVICE_PORT}:8080
+      - ${API_SERVICE_PORT}:${API_SERVICE_PORT}
     environment:
       SETUP_JWT_SECRET: ${API_SERVICE_JWT_SECRET}
       SETUP_PORT: ${API_SERVICE_PORT}

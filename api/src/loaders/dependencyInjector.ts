@@ -2,7 +2,7 @@ import { Db } from "mongodb";
 import Container from "typedi";
 import LoggerInstance from "./logger";
 
-export default ({ mongoDatabase, models }: { mongoDatabase: Db; models: { name: string; model: any }[] }) => {
+export default (models: { name: string, model: any}[]) => {
   try {
     models.forEach(model => {
       Container.set(model.name, model.model);

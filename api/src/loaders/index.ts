@@ -4,15 +4,13 @@ import expressLoader from "./express";
 import mongooseLoader from "./mongoose";
 import dependencyInjectorLoader from "./dependencyInjector";
 import { Db } from "mongodb";
+import { models } from "./dbModels";
 
 export default async (app: Express) => {
-  const mongoDatabase: Db = await mongooseLoader();
+  await mongooseLoader();
   Logger.info("DB loaded and connected");
 
-  await dependencyInjectorLoader({
-    mongoDatabase,
-    models: models
-  })
+  await dependencyInjectorLoader(models)
 
   await expressLoader(app);
   Logger.info("Express loaded");

@@ -2,9 +2,12 @@ import { Document } from "mongoose";
 import { IGame } from "./IGame";
 
 export interface IUser {
-  _id?: string,
-  username: string,
-  email: string,
-  displayName: string,
+  _id?: string
+  username: string
+  email: string
+  password: string
+  salt: string
+  displayName: string
   games: Array<IGame & Document>
+  imageUrl: string
 }
