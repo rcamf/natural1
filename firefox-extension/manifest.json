@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "dnd-rolltracker",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": "./icons/black_dice.svg",
+    "default_title": "Roll20 Rolltracker",
+    "default_popup": "./popup/toolbar_popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "storage",
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://app.roll20.net/editor/"],
+      "js": ["rolltracker.js"]
+    }
+  ]
+}
