@@ -42,6 +42,12 @@ const IRollSchema = new Schema({
     type: Types.ObjectId,
     ref: collectionNames.USER,
     required: true
+  },
+
+  game: {
+    type: Types.ObjectId,
+    ref: collectionNames.GAME,
+    required: true
   }
 }, { timestamps: true })
 

@@ -28,12 +28,29 @@ export default class AuthService {
       
       const user = userDoc.toObject<IUser>();
       Reflect.deleteProperty(user, "password");
-      Reflect.deleteProperty(user, "salt")
+      Reflect.deleteProperty(user, "salt");
 
       return { user, token }
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error("Error: %o", error);
     }
+  }
+
+  public async signIn(email: string, password: string): Promise<{ user: IUser; token: string }> {
+    const userDoc = await userModel.findOne({ email });
+    if (!userDoc) {
+      throw new Error("Unregistered User");
+    }
+    const correctPassword = await argon2.verify(userDoc.password, password);
+    if (!correctPassword) {
+      throw new Error("Wrong password");
+    }
+    const token = this.generateToken(userDoc);
+    const user = userDoc.toObject<IUser>();
+    Reflect.deleteProperty(user, "password");
+    Reflect.deleteProperty(user, "salt");
+
+    return { user, token };
   }
 
   private generateToken(user: IUser) {

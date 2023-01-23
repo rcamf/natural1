@@ -2,6 +2,8 @@ import { Container } from 'typedi';
 import mongoose from 'mongoose';
 import { IUser } from '../../interfaces/IUser';
 import winston from 'winston';
+import { NextFunction, Request, Response } from 'express';
+import { IRequestWithToken } from '../../interfaces';
 
 /**
  * Attach user to req.currentUser
@@ -9,7 +11,7 @@ import winston from 'winston';
  * @param {*} res  Express res Object
  * @param {*} next  Express next Function
  */
-const attachCurrentUser = async (req, res, next) => {
+const attachCurrentUser = async (req: IRequestWithToken, res: Response, next: NextFunction) => {
   const Logger = Container.get<winston.Logger>('logger');
   try {
     const UserModel = Container.get('userModel') as mongoose.Model<IUser & mongoose.Document>;
@@ -21,7 +23,7 @@ const attachCurrentUser = async (req, res, next) => {
       return res.sendStatus(401);
     }
 
-    const currentUser = userRecord.toObject();
+    const currentUser = userRecord.toObject<IUser>();
     Reflect.deleteProperty(currentUser, 'password');
     Reflect.deleteProperty(currentUser, 'salt');
     req.currentUser = currentUser;

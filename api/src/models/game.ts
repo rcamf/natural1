@@ -14,14 +14,14 @@ const IGameSchema = new Schema({
     required: true
   },
 
+  description: {
+    type: String,
+    default: ""
+  },
+
   members: [{
     type: Types.ObjectId,
     ref: collectionNames.USER
-  }],
-
-  rolls: [{
-    type: Types.ObjectId,
-    ref: collectionNames.ROLL
   }]
 }, { timestamps: true })
 

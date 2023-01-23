@@ -6,6 +6,12 @@ export interface IGame {
   _id?: string,
   name: string,
   owner: IUser & Document
+  description?: string
   members: Array<IUser & Document>
-  rolls: Array<IRoll & Document>
+}
+
+export interface IGameInputDTO {
+  name?: string
+  owner?: string
+  description?: string
 }

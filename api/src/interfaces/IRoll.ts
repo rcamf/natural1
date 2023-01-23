@@ -11,4 +11,5 @@ export interface IRoll {
   }],
   result: number
   author: string
+  game: string
 }
