@@ -5,35 +5,108 @@ let lastID = ""
 
 const parser = new DOMParser()
 
+const getNameForRoll = (node) => {
+  let nameNode = node
+  while (nameNode.getElementsByClassName("by").length == 0) {
+    console.log(nameNode)
+    nameNode = nameNode.previousElementSibling
+  }
+  return nameNode.getElementsByClassName("by")[0].innerHTML.slice(0, -1)
+}
+
 const mutationObserver = new MutationObserver((mutations, observer) => {
   mutations.forEach(mutation => {
-    if(mutation.type === "childList") {
+    if (mutation.type === "childList") {
       mutation.addedNodes.forEach(node => {
-        if(node instanceof HTMLDivElement && node.classList.contains("message")) {
-          if(node.classList.contains("rollresult")) {
-            
+        if (node instanceof HTMLDivElement && node.classList.contains("message")) {
+          console.log(node)
+          if (node.classList.contains("rollresult")) {
+
           } else if (node.classList.contains("general")) {
-            const data = {
-              message_id: node.attributes.getNamedItem("data-messageid"),
-              rolls: []
-            }
-            let nameNode = node
-            while(nameNode.childElementCount != 5) {
-              nameNode = nameNode.previousElementSibling
-            }
-            data.name = nameNode.children[3].innerHTML.slice(0, -1)
+
             // @TODO: Add tracking for sneak damage
+            const sheetDescDiv = node.getElementsByClassName("sheet-desc")
             const sheetContainerDiv = node.getElementsByClassName("sheet-container")[0]
-            const sheetDescDiv = node.getElementsByClassName("sheet-desc")[0]
-            if (sheetContainerDiv.classList.contains("sheet-damagetemplate")) {
-              const sheetSoloDiv = sheetContainerDiv.getElementsByClassName("sheet-solo")[0]
-              const inlinerollresults = sheetSoloDiv.getElementsByClassName("inlinerollresult")
-              Array.from(inlinerollresults).forEach(irr => {
+            let rollSheets = []
+            const data = {
+              messageId: node.attributes.getNamedItem("data-messageid").value,
+              type: "",
+              individualRolls: [],
+              game: "63df12321389d00da451370c",
+              playerId: "testPlayer",
+              type: "RND"
+            }
+            console.log("Here 1")
+            data.playerName = getNameForRoll(node)
+            console.log("Here 1.2")
+            let isLabel = false
+            let rollType
+            if (sheetDescDiv.length) {
+              console.log("Here 1.3")
+              rollSheets = [].slice.call(sheetDescDiv)
+            } if (sheetContainerDiv) {
+              console.log("Here 1.4")
+              isLabel = !sheetContainerDiv.classList.contains("sheet-damagetemplate")
+              console.log("Here 1.4.1")
+              const sheetSoloDivs = sheetContainerDiv.getElementsByClassName("sheet-solo")
+              console.log("Here 1.4.2")
+              const sheetAdvDivs = sheetContainerDiv.getElementsByClassName("sheet-adv")
+              for (let sheet of sheetSoloDivs) {
+                rollSheets.push(sheet)
+              }
+              for (let sheet of sheetAdvDivs) {
+                rollSheets.push(sheet)
+              }
+              console.log("Here 1.4.3")
+            } else {
+              console.log("Here 1.5", sheetDescDiv.length, sheetContainerDiv)
+              return
+            }
+            console.log("Here 2", rollSheets)
+            for (let rollSheet of rollSheets) {
+              console.log("Here 3", rollSheet)
+              const inlinerollresults = rollSheet.getElementsByClassName("inlinerollresult")
+              Array.from(inlinerollresults).forEach((irr, i) => {
                 const originalTitle = irr.attributes.getNamedItem("title").value
-                const formula = originalTitle.slice()
-                
+                const endfOfFirstTag = originalTitle.indexOf(">") // End of the image tag 
+                const removeFirstTag = originalTitle.slice(endfOfFirstTag + 1).trim()
+                const firstWhiteSpace = removeFirstTag.indexOf(" ") // Whitespace after "Rolling"
+                const removedRolling = removeFirstTag.slice(firstWhiteSpace + 1).trim()
+                const indexOfEqual = removedRolling.indexOf("=") // The equal sign after the formula
+                const formula = removedRolling.slice(0, indexOfEqual).trim()
+                const removedFormula = removedRolling.slice(indexOfEqual + 1)
+                const indexOfAngleBracketClosed = removedFormula.indexOf(">") // The end of the span tag 
+                const removedFirstSpan = removedFormula.slice(indexOfAngleBracketClosed + 1)
+                const indexOfAngleBracketOpen = removedFirstSpan.indexOf("<") // The start of the tag after the raw result
+                const rawResult = removedFirstSpan.slice(0, indexOfAngleBracketOpen)
+                let label
+                console.log("3.1")
+                if (isLabel) {
+                  label = sheetContainerDiv.getElementsByClassName("sheet-label")[0].getElementsByTagName("a")[0].innerHTML
+                } else {
+                  label = rollSheet.getElementsByClassName("sheet-sublabel")[0].innerHTML
+                }
+                data.individualRolls.push({
+                  formula,
+                  result: irr.innerHTML,
+                  label: (i != 0 ? "CRIT " : "") + label,
+                  rawResult
+                })
               })
-            }            
+            }
+            console.log(data)
+            window.fetch("http://localhost:8080/api/roll/pushRolls", {
+              method: "POST",
+              headers: {
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2RmMGQyYzE1YTVjOWMwNTEwMGY1OTEiLCJleHAiOjE2NzU2NDg2ODQuNzE5LCJpYXQiOjE2NzU1NjIyODR9.G3UQckVCdiKKt1JB2ObxJZ-LMMiIsJrowvmvdC5gMYI",
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                rolls: [data]
+              })
+            })
+              .then(result => console.log(result))
+              .catch(error => console.log(error))
           }
         }
       })

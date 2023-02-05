@@ -10,8 +10,10 @@
   "permissions": [
     "activeTab",
     "contextMenus",
+    "webRequest",
     "storage",
-    "tabs"
+    "tabs",
+    "<all_urls>"
   ],
   "content_scripts": [
     {
