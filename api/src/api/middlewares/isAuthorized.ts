@@ -1,4 +1,4 @@
-import { expressjwt as jwt, Params } from "express-jwt";
+import { expressjwt as jwt } from "express-jwt";
 import { Request } from 'express';
 import configObject from '../../config';
 

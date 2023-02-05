@@ -3,6 +3,7 @@ import Container from "typedi";
 import winston from "winston";
 import { IRequestWithToken } from "../../interfaces";
 import GameService from "../../services/gameService";
+import middlewares from "../middlewares";
 
 export default (app: Router) => {
   const router = Router();
@@ -30,6 +31,8 @@ export default (app: Router) => {
 
   router.post(
     "/createGame",
+    middlewares.isAuth,
+    middlewares.attachCurrentUser,
     async (req:IRequestWithToken, res: Response, next: NextFunction) => {
       const logger = Container.get<winston.Logger>("logger");
       logger.debug("Endpoint with body: %o", req.body);
@@ -37,7 +40,7 @@ export default (app: Router) => {
         const gameService = Container.get(GameService);
         const newGame = {
           name: req.body.name,
-          owner: req.token._id,
+          owner: req.auth._id,
           description: req.body.description
         }
         const createdGame = await gameService.createGame(newGame);

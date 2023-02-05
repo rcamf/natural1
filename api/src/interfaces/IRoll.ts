@@ -2,7 +2,7 @@ import { ERollType } from "./ERollType"
 
 export interface IRoll {
   _id?: string
-  type: ERollType
+  // type: ERollType
   messageId: string
   playerId: string
   playerName: string

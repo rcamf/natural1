@@ -3,11 +3,11 @@ import { ERollType, IRoll } from "../interfaces";
 import { collectionNames } from "./config";
 
 const IRollSchema = new Schema({
-  type: {
-    type: String,
-    enum: Object.values(ERollType),
-    required: true
-  },
+  // type: {
+  //   type: String,
+  //   enum: Object.values(ERollType),
+  //   required: true
+  // },
 
   messageId: {
     type: String,

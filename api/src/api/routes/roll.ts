@@ -3,6 +3,7 @@ import Container from "typedi";
 import winston from "winston";
 import { IRequestWithToken, IRoll } from "../../interfaces";
 import RollService from "../../services/rollService";
+import middlewares from "../middlewares";
 
 export default (app: Router) => {
   const router = Router();
@@ -29,13 +30,15 @@ export default (app: Router) => {
 
   router.post(
     "/pushRolls",
+    middlewares.isAuth,
+    middlewares.attachCurrentUser,
     async (req: IRequestWithToken, res: Response, next: NextFunction) => {
       const logger = Container.get<winston.Logger>("logger");
       logger.debug("Endpoint with body: %o", req.body);
       try {
         const rollService = Container.get(RollService);
         req.body.rolls.forEach((roll: IRoll) => {
-          roll.author = req.token._id;
+          roll.author = req.auth._id;
         })
         const rolls = await rollService.pushRolls(req.body.rolls);
         return res.status(201).send({
@@ -51,7 +54,7 @@ export default (app: Router) => {
   )
 
   router.delete(
-    "/deleteRoll",
+    "deleteRoll",
     async (req: IRequestWithToken, res: Response, next: NextFunction) => {
       const logger = Container.get<winston.Logger>("logger");
       logger.debug("Endpoint with body: %o", req.body);

@@ -16,8 +16,8 @@ const attachCurrentUser = async (req: IRequestWithToken, res: Response, next: Ne
   try {
     const UserModel = Container.get('userModel') as mongoose.Model<IUser & mongoose.Document>;
 
-    Logger.info("Requesting for: ", req.token._id)
-    const userRecord = await UserModel.findById(req.token._id);
+    Logger.info("Requesting for: ", req.auth._id)
+    const userRecord = await UserModel.findById(req.auth._id);
 
     if (!userRecord) {
       return res.sendStatus(401);
