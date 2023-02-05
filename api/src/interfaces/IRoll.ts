@@ -1,15 +1,18 @@
+import { ERollType } from "./ERollType"
+
 export interface IRoll {
   _id?: string
-  formula: string
   type: ERollType
+  messageId: string
   playerId: string
   playerName: string
   description?: string
   individualRolls: [{
     formula: string
     result: number
+    label?: string
+    rawResult: number
   }],
-  result: number
   author: string
   game: string
 }

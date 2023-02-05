@@ -9,7 +9,7 @@ export default (app: Router) => {
   app.use("/roll", router);
 
   router.get(
-    "findRolls",
+    "/findRolls",
     async (req: IRequestWithToken, res: Response, next: NextFunction) => {
       const logger = Container.get<winston.Logger>("logger");
       logger.debug("Endpoint with body: %o", req.body);
@@ -28,7 +28,7 @@ export default (app: Router) => {
   )
 
   router.post(
-    "pushRolls",
+    "/pushRolls",
     async (req: IRequestWithToken, res: Response, next: NextFunction) => {
       const logger = Container.get<winston.Logger>("logger");
       logger.debug("Endpoint with body: %o", req.body);
@@ -51,7 +51,7 @@ export default (app: Router) => {
   )
 
   router.delete(
-    "deleteRoll",
+    "/deleteRoll",
     async (req: IRequestWithToken, res: Response, next: NextFunction) => {
       const logger = Container.get<winston.Logger>("logger");
       logger.debug("Endpoint with body: %o", req.body);

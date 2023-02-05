@@ -1,17 +1,17 @@
 import { Document, model, Schema, Types } from "mongoose";
-import { IRoll } from "../interfaces";
+import { ERollType, IRoll } from "../interfaces";
 import { collectionNames } from "./config";
 
 const IRollSchema = new Schema({
-  formula: {
-    type: String,
-    required: true
-  },
-
   type: {
     type: String,
     enum: Object.values(ERollType),
     required: true
+  },
+
+  messageId: {
+    type: String,
+    unique: true
   },
 
   playerId: String,
@@ -29,14 +29,16 @@ const IRollSchema = new Schema({
       formula: {
         type: String,
         required: true
+      },
+      label: {
+        type: String
+      },
+      rawResult: {
+        type: Number,
+        required: true
       }
     }
   }],
-
-  result: {
-    type: Number,
-    required: true
-  },
 
   author: {
     type: Types.ObjectId,
