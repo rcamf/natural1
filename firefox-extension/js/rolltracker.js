@@ -20,22 +20,31 @@ const mutationObserver = new MutationObserver((mutations, observer) => {
       mutation.addedNodes.forEach(node => {
         if (node instanceof HTMLDivElement && node.classList.contains("message")) {
           console.log(node)
+          const data = {
+            messageId: node.attributes.getNamedItem("data-messageid").value,
+            type: "",
+            individualRolls: [],
+            game: "63df12321389d00da451370c",
+            type: "RND"
+          }
           if (node.classList.contains("rollresult")) {
-
+            const formulaDiv = node.getElementsByClassName("formula")[0]
+            const formulaDivValue = formulaDiv.innerHTML // Space after "rolling"
+            const indexOfSpace = formulaDivValue.indexOf(" ")
+            const formula = formulaDivValue.slice(indexOfSpace + 1)
+            data.playerName = getNameForRoll(node)
+            const resultDiv = node.getElementsByClassName("rolled")[0]
+            data.individualRolls.push({
+              formula,
+              label: "Basic Roll",
+              rawResult: resultDiv.innerHTML,
+              result: resultDiv.innerHTML
+            })
           } else if (node.classList.contains("general")) {
-
-            // @TODO: Add tracking for sneak damage
             const sheetDescDiv = node.getElementsByClassName("sheet-desc")
             const sheetContainerDiv = node.getElementsByClassName("sheet-container")[0]
             let rollSheets = []
-            const data = {
-              messageId: node.attributes.getNamedItem("data-messageid").value,
-              type: "",
-              individualRolls: [],
-              game: "63df12321389d00da451370c",
-              playerId: "testPlayer",
-              type: "RND"
-            }
+
             console.log("Here 1")
             data.playerName = getNameForRoll(node)
             console.log("Here 1.2")
@@ -94,20 +103,20 @@ const mutationObserver = new MutationObserver((mutations, observer) => {
                 })
               })
             }
-            console.log(data)
-            window.fetch("http://localhost:8080/api/roll/pushRolls", {
-              method: "POST",
-              headers: {
-                "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2RmMGQyYzE1YTVjOWMwNTEwMGY1OTEiLCJleHAiOjE2NzU2NDg2ODQuNzE5LCJpYXQiOjE2NzU1NjIyODR9.G3UQckVCdiKKt1JB2ObxJZ-LMMiIsJrowvmvdC5gMYI",
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                rolls: [data]
-              })
-            })
-              .then(result => console.log(result))
-              .catch(error => console.log(error))
           }
+          console.log(data)
+          window.fetch("http://localhost:8080/api/roll/pushRolls", {
+            method: "POST",
+            headers: {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2MwODVkMmZmZTMyODU3OWJkNGY0MjkiLCJleHAiOjE2NzU3Nzk5MzguNDksImlhdCI6MTY3NTY5MzUzOH0.GQnCt3AZu7eLlFK_jDFnJ3sMpDLUuFyVZIQrPG46vlY",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              rolls: [data]
+            })
+          })
+            .then(result => console.log(result))
+            .catch(error => console.log(error))
         }
       })
     }
