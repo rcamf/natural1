@@ -18,6 +18,10 @@ export default (app: Express) => {
 
   app.use(config.setup.apiPrefix, routes());
 
+  
+  console.log(config.temp.signupPrefix)
+  app.use(config.temp.signupPrefix, express.static("src/signup"))
+
   app.use((req, res, next) => {
     const err = new Error("Not Found") as any;
     err["status"] = 404;

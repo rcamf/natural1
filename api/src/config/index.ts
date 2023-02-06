@@ -7,6 +7,9 @@ const configObject = {
 		port: parseInt(process.env.SETUP_PORT, 10),
 		nodeENV: process.env.NODE_ENV
 	},
+	temp: {
+		signupPrefix: process.env.TEMP_SIGNUP_PREFIX
+	},
 	cors: {
 		whitelist: process.env.CORS_WHITELIST?.split(",")
 	},
