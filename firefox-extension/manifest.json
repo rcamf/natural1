@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "dnd-rolltracker",
+  "name": "NATURAL1",
   "version": "1.0",
   "browser_action": {
     "default_icon": "./icons/black_dice.svg",
-    "default_title": "Roll20 Rolltracker",
-    "default_popup": "./popup/toolbar_popup.html"
+    "default_title": "NATURAL1",
+    "default_popup": "./html/login_popup.html"
   },
   "permissions": [
     "activeTab",
@@ -13,12 +13,18 @@
     "webRequest",
     "storage",
     "tabs",
+    "http://localhost/*",
     "<all_urls>"
   ],
+  "background": {
+    "scripts": [
+      "./js/background.js"
+    ]
+  },
   "content_scripts": [
     {
       "matches": ["https://app.roll20.net/editor/"],
-      "js": ["rolltracker.js"]
+      "js": ["./js/rolltracker.js"]
     }
   ]
 }
