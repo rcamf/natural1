@@ -14,7 +14,7 @@ const IRollSchema = new Schema({
     unique: true
   },
 
-  playerId: String,
+  // playerId: String,
 
   playerName: String,
 

@@ -4,7 +4,7 @@ export interface IRoll {
   _id?: string
   // type: ERollType
   messageId: string
-  playerId: string
+  // playerId: string
   playerName: string
   description?: string
   individualRolls: [{
