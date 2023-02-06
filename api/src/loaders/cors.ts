@@ -2,12 +2,12 @@ import config from "../config";
 
 const corsOptions = {
   credentials: true,
-  origin: (origin: any, callback: any) => {
-    if (config.cors.whitelist.includes(origin)) {
+  origin: (origin: string | undefined, callback: any) => {
+    if (origin == undefined) {
       return callback(null, true);
     }
 
-    if (origin == undefined) {
+    if (config.cors.whitelist.findIndex(element => origin.match(element)) != -1) {
       return callback(null, true);
     }
 
