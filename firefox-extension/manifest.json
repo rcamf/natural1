@@ -7,6 +7,12 @@
     "default_title": "NATURAL1",
     "default_popup": "./html/login_popup.html"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "natural@one",
+      "strict_min_version": "42.0"
+    }
+  },
   "permissions": [
     "activeTab",
     "contextMenus",
