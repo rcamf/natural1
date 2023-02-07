@@ -1,5 +1,5 @@
 browser.runtime.onStartup.addListener(() => {
-  browser.tabs.create({
-    url: "./static/login.html"
+  browser.storage.local.get("token").then(result => {
+    console.log(result)
   })
 })

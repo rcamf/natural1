@@ -12,16 +12,18 @@ form.addEventListener("submit", (event) => {
         password: form.elements.namedItem("inputPassword").value
       })
     }).then(result => {
-      browser.storage.local.set({
-        token: result.token
-      }).then(_ => {
-        browser.browserAction.setPopup({
-          popup: "./default_popup.html"
-        })
-        window.location.replace("./default_popup.html")
-      }).catch(error => console.log(error))
-    }).catch(error => {
-      console.log(error)
+      if (result.status == 200) {
+        browser.storage.local.set({
+          token: result.token
+        }).then(_ => {
+          browser.browserAction.setPopup({
+            popup: "./default_popup.html"
+          })
+          window.location.replace("./default_popup.html")
+        }).catch(error => console.log(error))
+      } else {
+        console.log(result)
+      }      
     })
   }
 })
