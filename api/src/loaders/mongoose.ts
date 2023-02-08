@@ -8,4 +8,5 @@ export default async (): Promise<void> => {
     pass: config.mongo.mongoPassword,
     dbName: config.mongo.mongoDbName
   });
+  connection.set('strictQuery', true);
 };
