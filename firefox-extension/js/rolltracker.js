@@ -1,7 +1,6 @@
 const chatDiv = document.getElementById("textchat")
 const chatContentDiv = chatDiv.getElementsByClassName("content")[0]
 
-let lastID = ""
 
 const parser = new DOMParser()
 

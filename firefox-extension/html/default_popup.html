@@ -13,7 +13,27 @@
 </head>
 
 <body>
-  <h2>TEST</h2>
+  <div id="root">
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+          <form class="mb-3 mt-md-4" id="track-form">
+            <h2 class="fw-bold mb-2 text-uppercase ">NATURAL1</h2>
+            <p class="mb-5">Start tracking your game <br>(Only open one Roll20 Tab at a time):</p>
+            <div class="mb-3 row">
+              <label for="gameInput" class="col-form-label col-4">Email</label>
+              <select class="col-form-select col-auto" aria-label="Default select example" id="gameSelect">
+                <option selected>Select Game</option>
+              </select>
+            </div>
+            <div class="d-grid">
+              <button class="btn btn-danger" type="submit">Track Rolls</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
-
-</html>
+<script src="../js/dashboard.js"></script>
+</html> 
