@@ -1,7 +1,7 @@
 import { Document, FilterQuery, MongooseQueryOptions, ProjectionType } from "mongoose";
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
-import { IGameInputDTO, IGame } from "../interfaces";
+import { IGame } from "../interfaces";
 import gameModel from "../models/game";
 
 @Service()
@@ -10,7 +10,7 @@ export default class GameService {
     @Inject("logger") private logger: Logger
   ) { }
 
-  public async createGame(newGame: IGameInputDTO): Promise<{ game: IGame }> {
+  public async createGame(newGame: IGame): Promise<{ game: IGame }> {
     try {
       const gameDoc = await gameModel.create(newGame);
       const game = gameDoc.toObject<IGame>();
@@ -20,8 +20,11 @@ export default class GameService {
     }
   }
 
-  public async findGames(filter: FilterQuery<IGame>, projection: ProjectionType<IGame>, options: MongooseQueryOptions): Promise<Array<IGame & Document>> {
+  public async findGames(filter: FilterQuery<IGame>, projection: ProjectionType<IGame>, options: MongooseQueryOptions, owner: string, isAdmin: boolean = false): Promise<Array<IGame & Document>> {
     try {
+      if (!isAdmin) {
+        filter.owner = owner;
+      }
       const gameDocs = await gameModel.find(filter, projection, options);
       return gameDocs;
     } catch (error) {
@@ -29,9 +32,9 @@ export default class GameService {
     }
   }
 
-  public async deleteGameById(gameId: string): Promise<boolean> {
+  public async deleteGameById(gameId: string, owner: string): Promise<boolean> {
     try {
-      const result = await gameModel.deleteOne({ _id: gameId });
+      const result = await gameModel.deleteOne({ _id: gameId, owner: owner });
       return result.acknowledged;
     } catch (error) {
       this.logger.error("Error: %o", error);

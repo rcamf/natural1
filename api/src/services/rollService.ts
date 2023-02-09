@@ -10,8 +10,11 @@ export default class RollService {
     @Inject("logger") private logger: Logger
   ) { }
 
-  public async findRolls(filter: FilterQuery<IRoll & Document>, projection: ProjectionType<IRoll & Document>, options: MongooseQueryOptions): Promise<Array<IRoll & Document>> {
+  public async findRolls(filter: FilterQuery<IRoll & Document>, projection: ProjectionType<IRoll & Document>, options: MongooseQueryOptions, owner: string, isAdmin: boolean = false): Promise<Array<IRoll & Document>> {
     try {
+      if (!isAdmin) {
+        filter.owner = owner;
+      }
       const rollDocs = await rollModel.find(filter, projection, options);
       return rollDocs;
     } catch (error) {
@@ -28,9 +31,9 @@ export default class RollService {
     }
   }
 
-  public async deleteRollById(rollId: string): Promise<boolean> {
+  public async deleteRollById(rollId: string, owner: string): Promise<boolean> {
     try {
-      const result = await rollModel.deleteOne({ _id: rollId });
+      const result = await rollModel.deleteOne({ _id: rollId, owner: owner });
       return result.acknowledged;
     } catch (error) {
       this.logger.error("Error: %o", error);

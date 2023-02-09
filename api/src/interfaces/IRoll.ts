@@ -1,4 +1,6 @@
+import { Document } from "mongodb"
 import { ERollType } from "./ERollType"
+import { IUser } from "./IUser"
 
 export interface IRoll {
   _id?: string
@@ -13,6 +15,6 @@ export interface IRoll {
     label?: string
     rawResult: number
   }],
-  author: string
+  author: IUser & Document | string
   game: string
 }

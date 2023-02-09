@@ -5,13 +5,7 @@ import { IRoll } from "./IRoll";
 export interface IGame {
   _id?: string,
   name: string,
-  owner: IUser & Document
+  owner: IUser & Document | string
   description?: string
   members: Array<IUser & Document>
-}
-
-export interface IGameInputDTO {
-  name?: string
-  owner?: string
-  description?: string
 }

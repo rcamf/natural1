@@ -8,7 +8,7 @@ export interface IUser {
   password: string
   salt: string
   displayName?: string
-  games?: Array<IGame & Document>
+  games?: Array<IGame & Document | string>
   imageUrl: string
   isAdmin?: boolean
 }

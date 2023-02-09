@@ -1,7 +1,9 @@
+import { celebrate } from "celebrate";
 import { NextFunction, Response, Router } from "express";
 import Container from "typedi";
 import winston from "winston";
 import { IRequestWithToken, IRoll } from "../../interfaces";
+import { DeleteRollSchema, FindRollsSchema, PushRollsSchema } from "../../schemas/RollSchema";
 import RollService from "../../services/rollService";
 import middlewares from "../middlewares";
 
@@ -9,16 +11,22 @@ export default (app: Router) => {
   const router = Router();
   app.use("/roll", router);
 
-  router.get(
+  router.post(
     "/findRolls",
+    celebrate({
+      body: FindRollsSchema
+    }),
+    middlewares.isAuth,
+    middlewares.attachCurrentUser,
     async (req: IRequestWithToken, res: Response, next: NextFunction) => {
       const logger = Container.get<winston.Logger>("logger");
       logger.debug("Endpoint with body: %o", req.body);
       try {
         const rollService = Container.get(RollService);
-        const rolls = await rollService.findRolls(req.body.filter, req.body.projection, req.body.options);
+        const rolls = await rollService.findRolls(req.body.filter, req.body.projection, req.body.options, req.auth._id);
         return res.status(200).send({
           date: Date.now(),
+          message: "All your rolls",
           data: rolls
         })
       } catch (error) {
@@ -30,6 +38,9 @@ export default (app: Router) => {
 
   router.post(
     "/pushRolls",
+    celebrate({
+      body: PushRollsSchema
+    }),
     middlewares.isAuth,
     middlewares.attachCurrentUser,
     async (req: IRequestWithToken, res: Response, next: NextFunction) => {
@@ -55,12 +66,17 @@ export default (app: Router) => {
 
   router.delete(
     "deleteRoll",
+    celebrate({
+      body: DeleteRollSchema
+    }),
+    middlewares.isAuth,
+    middlewares.attachCurrentUser,
     async (req: IRequestWithToken, res: Response, next: NextFunction) => {
       const logger = Container.get<winston.Logger>("logger");
       logger.debug("Endpoint with body: %o", req.body);
       try {
         const rollService = Container.get(RollService);
-        if (await rollService.deleteRollById(req.body.rollId)) {
+        if (await rollService.deleteRollById(req.body.rollId, req.auth._id)) {
           return res.status(204).end();
         }
         return res.status(400).send({
