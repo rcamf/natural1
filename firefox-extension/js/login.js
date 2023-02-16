@@ -26,7 +26,6 @@ form.addEventListener("submit", async (event) => {
         browser.storage.local.set({
           token: token
         }).then(test => {
-          console.log(test)
           browser.browserAction.setPopup({
             popup: "./default_popup.html"
           })
@@ -34,16 +33,5 @@ form.addEventListener("submit", async (event) => {
         })
       })
       .catch(error => console.log(error))
-
-    // .then(response => {
-    //   if (response.status == 200) {
-    //     console.log(response.bodyUsed, response.body.getReader().read().then(test => console.log(test)))
-    //     response.json()
-    //   } else {
-    //     console.log(response)
-    //   }
-    // }).then(result => {
-
-    // }).catch(error => console.log(error))
   }
 })

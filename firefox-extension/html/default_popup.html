@@ -16,18 +16,38 @@
   <div id="root">
     <div class="container">
       <div class="row d-flex justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
+        <div class="col-auto col-md-8 col-lg-6">
           <form class="mb-3 mt-md-4" id="track-form">
             <h2 class="fw-bold mb-2 text-uppercase ">NATURAL1</h2>
-            <p class="mb-5">Start tracking your game <br>(Only open one Roll20 Tab at a time):</p>
-            <div class="mb-3 row">
-              <label for="gameInput" class="col-form-label col-4">Email</label>
-              <select class="col-form-select col-auto" aria-label="Default select example" id="gameSelect">
-                <option selected>Select Game</option>
-              </select>
+            <div id="startTracking" class="d-none">
+              <p class="mb-5">Start tracking your game:</p>
+              <div class="mb-3 row">
+                <label for="gameInput" class="col-form-label col-4">Game</label>
+                <select class="col-form-select col-8" aria-label="Default select example" id="gameSelect">
+                  <option selected disabled>Select Game</option>
+                </select>
+              </div>
+              <div class="mb-3 row">
+                <label for="tabInput" class="col-form-label col-4">Tab</label>
+                <select class="col-form-select col-8" aria-label="Default select example" id="tabSelect">
+                  <option selected disabled>Select Tab</option>
+                </select>
+              </div>
+              <div class="d-grid">
+                <button class="btn btn-danger" type="submit" , id="submitButton">Track Rolls</button>
+              </div>
             </div>
-            <div class="d-grid">
-              <button class="btn btn-danger" type="submit">Track Rolls</button>
+            <div id="stopTracking" class="d-none">
+              <p class="mb-5">This stops tracking for all games:</p>
+              <div class="mb-3 row">
+                <label for="trackingTabInput" class="col-form-label col-6">Tracking Tab</label>
+                <select class="col-form-select col-6" aria-label="Default select example" id="trackingTabSelect">
+                  <option selected disabled>Select Tab</option>
+                </select>
+              </div>
+              <div class="d-grid">
+                <button class="btn btn-danger" type="submit" , id="stopButton">Stop Tracking</button>
+              </div>
             </div>
           </form>
         </div>
@@ -36,4 +56,5 @@
   </div>
 </body>
 <script src="../js/dashboard.js"></script>
-</html> 
+
+</html>

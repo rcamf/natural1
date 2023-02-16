@@ -1,9 +1,6 @@
 const chatDiv = document.getElementById("textchat")
 const chatContentDiv = chatDiv.getElementsByClassName("content")[0]
 
-
-const parser = new DOMParser()
-
 const getNameForRoll = (node) => {
   let nameNode = node
   while (nameNode.getElementsByClassName("by").length == 0) {
@@ -13,7 +10,11 @@ const getNameForRoll = (node) => {
   return nameNode.getElementsByClassName("by")[0].innerHTML.slice(0, -1)
 }
 
-const mutationObserver = new MutationObserver((mutations, observer) => {
+let tracking = false
+let token
+let game
+
+const mutationObserver = new MutationObserver((mutations, _observer) => {
   mutations.forEach(mutation => {
     if (mutation.type === "childList") {
       mutation.addedNodes.forEach(node => {
@@ -21,10 +22,8 @@ const mutationObserver = new MutationObserver((mutations, observer) => {
           console.log(node)
           const data = {
             messageId: node.attributes.getNamedItem("data-messageid").value,
-            type: "",
             individualRolls: [],
-            game: "63df12321389d00da451370c",
-            type: "RND"
+            game: game
           }
           if (node.classList.contains("rollresult")) {
             const formulaDiv = node.getElementsByClassName("formula")[0]
@@ -103,11 +102,12 @@ const mutationObserver = new MutationObserver((mutations, observer) => {
               })
             }
           }
-          console.log(data)
+          const jsonBody = JSON.stringify(data)
+          console.log(jsonBody)
           window.fetch("http://localhost:8080/api/roll/pushRolls", {
             method: "POST",
             headers: {
-              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2MwODVkMmZmZTMyODU3OWJkNGY0MjkiLCJleHAiOjE2NzU3Nzk5MzguNDksImlhdCI6MTY3NTY5MzUzOH0.GQnCt3AZu7eLlFK_jDFnJ3sMpDLUuFyVZIQrPG46vlY",
+              "Authorization": "Bearer " + token,
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -122,10 +122,24 @@ const mutationObserver = new MutationObserver((mutations, observer) => {
   })
 })
 
-mutationObserver.observe(chatContentDiv, {
-  childList: true
+browser.runtime.onMessage.addListener(message => {
+  if (message.type === "startTracking") {
+    token = message.token
+    game = message.game
+    tracking = true
+    mutationObserver.observe(chatContentDiv, {
+      childList: true
+    })
+    return Promise.resolve({ status: "Success" })
+  } else if (message.type === "stopTracking") {
+    tracking = false
+    mutationObserver.disconnect()
+    return Promise.resolve({ status: "Success" })
+  } else if (message.type === "getTrackingStatus") {
+    return Promise.resolve({ 
+      tracking: tracking, 
+      id: message.id,
+      title: message.title
+    })
+  }
 })
-
-browser.runtime.onMessage.addListener((message, sender, response) => {
-})
-
