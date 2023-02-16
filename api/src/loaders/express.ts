@@ -4,6 +4,8 @@ import corsOptions from "./cors";
 import express from "express";
 import config from "../config";
 import routes from "../api";
+import { errors, isCelebrateError } from "celebrate";
+import Logger from "./logger";
 
 export default (app: Express) => {
   app.get("/status", (req, res) => {
@@ -34,6 +36,9 @@ export default (app: Express) => {
         .status(err.status)
         .send({ message: err.message })
         .end();
+    }
+    if (isCelebrateError(err)) {
+      Logger.error(err + " with details: \n%o", err.details);
     }
     return next(err);
   })
